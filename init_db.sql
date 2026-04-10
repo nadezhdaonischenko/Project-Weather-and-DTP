@@ -10,6 +10,77 @@
 На данном этапе данные загружаются из внешних источников (API, JSON) в исходном виде. 
 Это позволяет сохранить историю изменений и производить повторную обработку данных (ETL) без повторных обращений к внешним сервисам.
 
+erDiagram
+    CITIES_COORDS ||--o{ GIBDD_ACCIDENTS_HISTORY_3_CITIES : "city_id -> id"
+    CITIES_COORDS ||--o{ WEATHER_HISTORY_3_CITIES : "name -> city"
+
+    CITIES_COORDS {
+        bigint id PK
+        text name "Unique Name"
+        text region
+        bigint population
+        double_precision latitude
+        double_precision longitude
+        text okato_region
+        text okato_city
+    }
+
+    GIBDD_ACCIDENTS_HISTORY_3_CITIES {
+        uuid id PK
+        bigint kart_id "Index"
+        date dtp_date "Index"
+        time dtp_time
+        text district
+        text dtp_type
+        integer pog_total
+        integer ran_total
+        integer vehicles_count
+        integer participants_count
+        text city_name
+        text address_street
+        text address_house
+        text road_category
+        text weather
+        text road_condition
+        text light_condition
+        numeric latitude
+        numeric longitude
+        jsonb road_faults
+        text v_id
+        text v_type
+        text v_marka
+        text v_model
+        text v_color
+        integer v_year
+        text v_ownership
+        text p_role
+        text p_gender
+        integer p_experience
+        text p_severity
+        text p_alcohol
+        text p_safety_belt
+        jsonb p_violations
+        jsonb p_additional_violations
+        bigint city_id FK
+    }
+
+    WEATHER_HISTORY_3_CITIES {
+        bigint id PK
+        text city FK
+        timestamp timestamp
+        real temp
+        real humidity
+        real precipitation
+        smallint weather_code
+        text weather_description
+        real wind_speed
+        double_precision pressure
+        double_precision snow_depth
+        double_precision rain
+        double_precision snowfall
+        double_precision apparent_temp
+    } 
+  
 ### 📍 Справочник городов (`cities_coords`)
 Хранит базовую информацию о населенных пунктах, их географические координаты и административные коды (ОКАТО).
 

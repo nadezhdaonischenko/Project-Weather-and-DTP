@@ -1,9 +1,9 @@
 # %% [markdown]
-# # ⚙️ Архитектура данных и автоматизация (Data Pipeline)
+# ⚙️ Архитектура данных и автоматизация (Data Pipeline)
 # 
 # В данном проекте реализована гибридная схема движения данных, объединяющая ручную предобработку и полную автоматизацию через **GitHub Actions**.
 # 
-# ### 1. 📥 Первичная загрузка (Manual Ingestion)
+### 1. 📥 Первичная загрузка (Manual Ingestion)
 # *   **Сбор данных:** Первичная выгрузка сырых данных ГИБДД осуществляется через текущий ноутбук (`data_loading_api.ipynb`).
 # *   **Буферизация:** Данные скачиваются локально в папку `gibdd_local_archive/` для проверки корректности.
 # *   **Синхронизация:** Через **GitHub Desktop** файлы фиксируются (commit) и отправляются в репозиторий.
@@ -11,7 +11,7 @@
 # 
 # ---
 # 
-# ### 2. 🤖 Автоматизация через GitHub Actions
+### 2. 🤖 Автоматизация через GitHub Actions
 # 
 # Процесс поддержания актуальности данных полностью автономен:
 # 
@@ -24,7 +24,7 @@
 # 
 # ---
 # 
-# ### 💡 Преимущества такой схемы:
+### 💡 Преимущества такой схемы:
 # 1.  **Чистота системы:** Локальный диск не захламляется гигабайтами сырых данных.
 # 2.  **Надежность:** GitHub хранит историю версий архива — всегда можно восстановить данные за прошлые периоды.
 # 3.  **Автономность:** Интерактивный дашборд обновляется самостоятельно, используя облачные скрипты и базу данных Supabase.
@@ -97,7 +97,7 @@ dadata = Dadata(DADATA_TOKEN, DADATA_SECRET)
 geolocator = Nominatim(user_agent="city_updater_bot", timeout=10)
 
 def get_cities_from_wiki():
-    print("🌐 Парсинг Википедии...")
+    print("Парсинг Википедии...")
     url = 'https://ru.wikipedia.org/wiki/Список_городов_России'
     headers = {'User-Agent': 'Mozilla/5.0'}
     response = requests.get(url, headers=headers)
@@ -112,7 +112,7 @@ def get_cities_from_wiki():
 
 def update_cities():
     df_filtered, pop_col = get_cities_from_wiki()
-    print(f"📊 Найдено {len(df_filtered)} городов > 100к.")
+    print(f"Найдено {len(df_filtered)} городов > 100к.")
 
     for _, row in df_filtered.iterrows():
         city = re.sub(r'\[.*?\]', '', str(row['Город'])).strip()
@@ -124,7 +124,7 @@ def update_cities():
         if check.data and check.data[0].get('okato_city'):
             continue # Город уже есть и заполнен
             
-        print(f"🔎 Обработка: {city}...")
+        print(f"Обработка: {city}...")
         
         # 2. Получаем координаты (Nominatim)
         lat, lon = None, None
@@ -241,7 +241,7 @@ def update_monthly_history():
     cities_from_db = res.data
     
     if not cities_from_db:
-        print("❌ Города не найдены в cities_coords!")
+        print("Города не найдены в cities_coords!")
         return
 
     params = [
@@ -253,14 +253,14 @@ def update_monthly_history():
 
     for city in cities_from_db:
         name, lat, lon = city['name'], city['latitude'], city['longitude']
-        print(f"\n🚀 Обработка: {name}")
+        print(f"\nОбработка: {name}")
         
         for start_dt, end_dt in intervals:
                 # Жестко форматируем координаты (убираем возможные пробелы и запятые)
                 clean_lat = str(lat).replace(',', '.')
                 clean_lon = str(lon).replace(',', '.')
                 
-                print(f"  📅 {start_dt} — {end_dt}", end=" ", flush=True)
+                print(f" {start_dt} — {end_dt}", end=" ", flush=True)
         
                 api_url = f"https://archive-api.open-meteo.com/v1/archive?latitude={clean_lat}&longitude={clean_lon}&start_date={start_dt}&end_date={end_dt}&hourly={','.join(params)}&timezone=auto"
         
@@ -270,13 +270,13 @@ def update_monthly_history():
                     
                     # Если API ругается
                     if "error" in r:
-                        print(f"❌ Ошибка API: {r.get('reason')}")
+                        print(f"Ошибка API: {r.get('reason')}")
                         print(f"Ссылка для проверки: {api_url}")
                         continue
 
                     h = r.get('hourly', {})
                     if not h or 'time' not in h:
-                        print(f"⏩ Пропуск. Ответ сервера: {r}")
+                        print(f"Пропуск. Ответ сервера: {r}")
                         continue
    
                     total = len(h['time'])
@@ -305,12 +305,12 @@ def update_monthly_history():
 
                     if batch:
                         supabase.table("weather_history_3_cities").upsert(batch, on_conflict='city,timestamp').execute()
-                        print(f"✅ ({len(batch)} ч.)")
+                        print(f"({len(batch)} ч.)")
                     
                     time.sleep(1.5)
                     
                 except Exception as e:
-                    print(f"❌ Ошибка: {e}. Жду 10 сек...")
+                    print(f"Ошибка: {e}. Жду 10 сек...")
                     time.sleep(10)
 
 if __name__ == "__main__":
@@ -401,7 +401,7 @@ SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 BASE_DIR = "gibdd_local_archive"
 
 if not SUPABASE_URL or not SUPABASE_KEY:
-    print("❌ Ошибка: Ключи Supabase не найдены в переменных окружения!")
+    print("Ошибка: Ключи Supabase не найдены в переменных окружения!")
     exit(1)
 
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
@@ -409,7 +409,7 @@ supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 def download_to_local():
     # Создаем папку сразу при старте скрипта
     os.makedirs(BASE_DIR, exist_ok=True) 
-    print(f"📂 ЗАПУСК СИНХРОНИЗАЦИИ...")
+    print(f"ЗАПУСК СИНХРОНИЗАЦИИ...")
     # ... остальной код
 
 def fix_date(d):
@@ -427,14 +427,14 @@ def safe_float(val):
         return None
 
 def upload_final():
-    print("🚀 ЗАПУСК ЗАГРУЗКИ В SUPABASE...")
+    print("ЗАПУСК ЗАГРУЗКИ В SUPABASE...")
     
     # Получаем актуальный справочник городов из базы
     city_res = supabase.table("cities_coords").select("id, name").execute()
     city_map = {c['name']: c['id'] for c in city_res.data}
 
     if not os.path.exists(BASE_DIR):
-        print("📁 Папка архива не найдена. Нечего загружать.")
+        print("Папка архива не найдена. Нечего загружать.")
         return
 
     for city_name in os.listdir(BASE_DIR):
@@ -531,9 +531,9 @@ def upload_final():
                                 on_conflict="kart_id, v_id, p_role, p_gender, p_experience"
                             ).execute()
                         except Exception as e:
-                            print(f"⚠️ Ошибка пакета в {file_name}: {e}")
+                            print(f"Ошибка пакета в {file_name}: {e}")
                 
-                print(f"✅ {city_name} {year}/{file_name}: {len(rows)} строк обработано")
+                print(f"{city_name} {year}/{file_name}: {len(rows)} строк обработано")
 
 if __name__ == "__main__":
     upload_final()
@@ -551,7 +551,7 @@ SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 BASE_DIR = "gibdd_local_archive"
 
 if not SUPABASE_URL or not SUPABASE_KEY:
-    print("❌ Ошибка: Переменные окружения SUPABASE_URL или SUPABASE_KEY не найдены!")
+    print("Ошибка: Переменные окружения SUPABASE_URL или SUPABASE_KEY не найдены!")
     exit(1)
 
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
@@ -570,18 +570,18 @@ def safe_float(val):
         return None
         
 def upload_final_with_dedup():
-    print("🚀 ЗАПУСК ПАРСИНГА...")
+    print("ЗАПУСК ПАРСИНГА...")
     
     if not os.path.exists(BASE_DIR):
         os.makedirs(BASE_DIR, exist_ok=True)
-        print(f"📁 Папка {BASE_DIR} была пуста и создана заново.")
+        print(f"Папка {BASE_DIR} была пуста и создана заново.")
 
     # Подгружаем ID городов
     try:
         city_res = supabase.table("cities_coords").select("id, name").execute()
         city_map = {c['name']: c['id'] for c in city_res.data}
     except Exception as e:
-        print(f"❌ Ошибка при получении справочника городов: {e}")
+        print(f"Ошибка при получении справочника городов: {e}")
         return
 
     for city_name in os.listdir(BASE_DIR):
@@ -675,9 +675,9 @@ def upload_final_with_dedup():
                                 on_conflict="kart_id, v_id, p_role, p_gender, p_experience"
                             ).execute()
                         except Exception as e:
-                            print(f"❌ Ошибка пакета {city_name} {year}/{file_name}: {e}")
+                            print(f"Ошибка пакета {city_name} {year}/{file_name}: {e}")
                 
-                print(f"✅ {city_name} {year}/{file_name}: {len(rows)} строк")
+                print(f"{city_name} {year}/{file_name}: {len(rows)} строк")
 
 if __name__ == "__main__":
     upload_final_with_dedup()

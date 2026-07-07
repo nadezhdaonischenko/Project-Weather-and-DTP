@@ -124,8 +124,8 @@ import seaborn as sns
 
 # %%
 # Настройки подключения
-SUPABASE_URL = "https://amrnphkuqweasmmkdrso.supabase.co"
-SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFtcm5waGt1cXdlYXNtbWtkcnNvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk1OTQyMjIsImV4cCI6MjA4NTE3MDIyMn0.QPDvFE6i4pItimhB_MGwjQR6g48P3fzUOzVEkbFm4nE"
+SUPABASE_URL = "https://amr***.supabase.co"
+SUPABASE_KEY = "***"
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 # %%
@@ -2293,8 +2293,8 @@ import math
 import numpy as np
 
 # --- 1. НАСТРОЙКИ ---
-SUPABASE_URL = "https://amrnphkuqweasmmkdrso.supabase.co"
-SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFtcm5waGt1cXdlYXNtbWtkcnNvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk1OTQyMjIsImV4cCI6MjA4NTE3MDIyMn0.QPDvFE6i4pItimhB_MGwjQR6g48P3fzUOzVEkbFm4nE"
+SUPABASE_URL = "https://amr***.supabase.co"
+SUPABASE_KEY = "***"
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 # 2. Добавляем таблицу городов из df_cities_filter

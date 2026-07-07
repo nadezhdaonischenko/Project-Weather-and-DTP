@@ -122,6 +122,9 @@ from phik import resources, report
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+import math
+import numpy as np
+
 # %%
 # Настройки подключения
 SUPABASE_URL = "https://amr***.supabase.co"
@@ -2287,30 +2290,20 @@ schema = {
 # Создание датафреймов
 dfs = {name: df_final[cols].drop_duplicates() for name, cols in schema.items()}
 
-# %%
-from supabase import create_client
-import math
-import numpy as np
-
-# --- 1. НАСТРОЙКИ ---
-SUPABASE_URL = "https://amr***.supabase.co"
-SUPABASE_KEY = "***"
-supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
-
-# 2. Добавляем таблицу городов из df_cities_filter
+# 1. Добавляем таблицу городов из df_cities_filter
 dfs['cities'] = df_cities_filter.drop_duplicates()
 
-# 3. Список колонок для конвертации в Boolean
+# 2. Список колонок для конвертации в Boolean
 bool_cols = [
     'road_marking', 'road_signs', 'street_lighting', 'pavement_defects', 
     'winter_conditions', 'traffic_light', 'drainage_system', 'road_narrowing', 
     'bus_stop_elements', 'road_works_zone_tsod', 'p_safety_belt'
 ] + [col for col in dfs['participants'].columns if col.startswith('v_')]
 
-# 4. Порядок загрузки (ВАЖНО: сначала главные таблицы)
+# 3. Порядок загрузки (ВАЖНО: сначала главные таблицы)
 upload_order = ['cities', 'accidents', 'location', 'road', 'vehicles', 'participants']
 
-# --- 5. ФУНКЦИЯ ЗАГРУЗКИ ---
+# --- 4. ФУНКЦИЯ ЗАГРУЗКИ ---
 def run_upsert():
     for name in upload_order:
         if name not in dfs: continue
